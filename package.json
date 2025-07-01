@@ -1,0 +1,32 @@
+{
+  "name": "dua-lipa-scraper-bot",
+  "version": "1.0.0",
+  "description": "Bot de scraping para monitorear entradas de Dua Lipa en All Access",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "pm2-start": "pm2 start ecosystem.config.js",
+    "pm2-stop": "pm2 stop dua-lipa-bot",
+    "pm2-restart": "pm2 restart dua-lipa-bot",
+    "pm2-logs": "pm2 logs dua-lipa-bot",
+    "pm2-status": "pm2 status",
+    "pm2-monit": "pm2 monit",
+    "pm2-delete": "pm2 delete dua-lipa-bot",
+    "pm2-save": "pm2 save",
+    "pm2-startup": "pm2 startup"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "keywords": [
+    "scraping",
+    "telegram",
+    "bot",
+    "dua-lipa",
+    "entradas",
+    "all-access"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
