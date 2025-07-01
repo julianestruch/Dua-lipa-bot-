@@ -250,3 +250,11 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Rechazo de promesa no manejado:', reason);
 });
+
+// Bucle infinito para mantener el proceso vivo (Railway workaround)
+async function keepAlive() {
+  while (true) {
+    await new Promise(resolve => setTimeout(resolve, 60 * 60 * 1000)); // 1 hora
+  }
+}
+keepAlive();
