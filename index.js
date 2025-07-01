@@ -1,6 +1,7 @@
 // Importamos las librerías necesarias
 const axios = require('axios');
 const TelegramBot = require('node-telegram-bot-api');
+const http = require('http');
 
 // --- CONFIGURACIÓN ---
 
@@ -204,3 +205,32 @@ setInterval(async () => {
     horasEnviadas.clear();
   }
 }, 60 * 1000); // Comprobar cada minuto
+
+// Crear un servidor HTTP simple para mantener el proceso activo
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot de Dua Lipa funcionando correctamente! 🎵');
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🌐 Servidor HTTP iniciado en puerto ${PORT}`);
+  console.log(`📡 El bot está listo para recibir peticiones HTTP`);
+});
+
+// Manejar señales de terminación
+process.on('SIGTERM', () => {
+  console.log('🛑 Recibida señal SIGTERM, cerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 Recibida señal SIGINT, cerrando servidor...');
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente');
+    process.exit(0);
+  });
+});
