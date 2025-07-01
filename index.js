@@ -182,27 +182,33 @@ mostrarTodosLosAsientos().then(() => {
   scrapeYNotificar();
 });
 
-// Enviar mensaje de "estoy funcionando correctamente" a las 00, 06, 12 y 18 horas
+// Enviar mensaje de "estoy funcionando correctamente" cada 6 horas
+// Railway está en us-east4-eqdc4a (UTC-4), ajustamos horarios para Argentina (UTC-3)
 let horasEnviadas = new Set();
 setInterval(async () => {
   const ahora = new Date();
-  const hora = ahora.getHours();
-  const minutos = ahora.getMinutes();
+  // Convertir a hora de Argentina (UTC-3)
+  const horaArgentina = new Date(ahora.getTime() + (1 * 60 * 60 * 1000)); // +1 hora para Argentina
+  const hora = horaArgentina.getHours();
+  const minutos = horaArgentina.getMinutes();
   
-  // Si es una de las horas objetivo (00, 06, 12, 18) y aún no se envió el mensaje hoy
-  if ((hora === 0 || hora === 6 || hora === 12 || hora === 18) && minutos === 0 && !horasEnviadas.has(hora)) {
+  // Horarios adaptados para Argentina: 06:00, 12:00, 18:00, 00:00 (hora local)
+  // En Railway (UTC-4) esto corresponde a: 05:00, 11:00, 17:00, 23:00
+  if ((hora === 6 || hora === 12 || hora === 18 || hora === 0) && minutos === 0 && !horasEnviadas.has(hora)) {
     try {
-      await bot.sendMessage(telegramChatId, '✅ Estoy funcionando correctamente.');
+      const horaFormateada = hora === 0 ? '00' : hora.toString().padStart(2, '0');
+      await bot.sendMessage(telegramChatId, `✅ Bot funcionando correctamente - ${horaFormateada}:00 (hora Argentina)`);
       horasEnviadas.add(hora);
-      console.log(`Mensaje de funcionamiento enviado a las ${hora.toString().padStart(2, '0')}:00.`);
+      console.log(`Mensaje de funcionamiento enviado a las ${horaFormateada}:00 (hora Argentina).`);
     } catch (e) {
       console.error('No se pudo enviar el mensaje de funcionamiento:', e.message);
     }
   }
   
-  // Resetear el set de horas enviadas después de las 23:59
+  // Resetear el set de horas enviadas después de las 23:59 (hora Argentina)
   if (hora === 23 && minutos === 59) {
     horasEnviadas.clear();
+    console.log('🔄 Reset de horas enviadas para el nuevo día.');
   }
 }, 60 * 1000); // Comprobar cada minuto
 
