@@ -23,6 +23,19 @@ const INTERVALO_MINUTOS = 30; // Intervalo de media hora
 const LINK_COMPRA = 'https://www.allaccess.com.ar/event/dua-lipa';
 const SECTORES_OBJETIVO = ['106', '105', '104', '103', '112', '113', '114.1', '114.2'];
 
+// ================== Servidor HTTP para Railway ==================
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot de Dua Lipa funcionando correctamente! 🎵');
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🌐 Servidor HTTP iniciado en puerto ${PORT}`);
+  console.log(`📡 El bot está listo para recibir peticiones HTTP`);
+});
+// ===============================================================
+
 /**
  * Función para mostrar todos los asientos disponibles en consola (solo al inicio)
  */
@@ -212,18 +225,6 @@ setInterval(async () => {
   }
 }, 60 * 1000); // Comprobar cada minuto
 
-// Crear un servidor HTTP simple para mantener el proceso activo
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Bot de Dua Lipa funcionando correctamente! 🎵');
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`🌐 Servidor HTTP iniciado en puerto ${PORT}`);
-  console.log(`📡 El bot está listo para recibir peticiones HTTP`);
-});
-
 // Manejar señales de terminación
 process.on('SIGTERM', () => {
   console.log('🛑 Recibida señal SIGTERM, cerrando servidor...');
@@ -239,4 +240,13 @@ process.on('SIGINT', () => {
     console.log('✅ Servidor cerrado correctamente');
     process.exit(0);
   });
+});
+
+// Manejo global de errores para evitar que el proceso termine
+process.on('uncaughtException', (err) => {
+  console.error('Excepción no capturada:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Rechazo de promesa no manejado:', reason);
 });
