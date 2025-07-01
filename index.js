@@ -7,11 +7,11 @@ const TelegramBot = require('node-telegram-bot-api');
 // URL del evento que queremos monitorear
 const url = 'https://www.allaccess.com.ar/event/dua-lipa';
 
-// ¡IMPORTANTE! Token de API completo y correcto.
-const telegramToken = '8045429192:AAEVgIT5e6YlzqtAQc5Si8AyEyhwcOHi5pI'; 
+// Token de API desde variables de entorno o valor por defecto
+const telegramToken = process.env.TELEGRAM_TOKEN || '8045429192:AAEVgIT5e6YlzqtAQc5Si8AyEyhwcOHi5pI'; 
 
-// ID de tu canal o chat donde se enviarán los mensajes.
-const telegramChatId = '-1002855050583'; 
+// ID de chat desde variables de entorno o valor por defecto
+const telegramChatId = process.env.TELEGRAM_CHAT_ID || '-1002855050583'; 
 
 // Sin cookies - haciendo peticiones directas
 
