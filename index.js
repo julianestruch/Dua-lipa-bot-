@@ -9,20 +9,25 @@ const bot = notifier.inicializarBot(config.telegramToken);
 async function verificarDisponibilidad() {
     console.log('🔍 Verificando disponibilidad de entradas...');
     try {
+        const estadoInicial = await stateManager.cargarEstado();
+        const esPrimeraEjecucion = estadoInicial.sectoresNotificados.length === 0;
+
         const bootstrapData = await scraper.obtenerDatos(config.url);
-        const estadoActual = await stateManager.cargarEstado();
-        
+        const estadoActual = { ...estadoInicial }; // Create a mutable copy
+
         const shows = bootstrapData.model.data.shows;
-        let nuevosSectoresDisponibles = [];
+        let sectoresDisponiblesAhora = []; // All sectors currently available
+        let nuevosSectoresParaNotificar = []; // Only new ones for Telegram
 
         for (const show of shows) {
             show.sectors.forEach(grupo => {
                 if (grupo.sections && grupo.sections.length > 0) {
                     grupo.sections.forEach(subSector => {
                         if (config.sectoresObjetivo.includes(subSector.name) && subSector.available) {
+                            sectoresDisponiblesAhora.push(subSector.name);
                             if (!estadoActual.sectoresNotificados.includes(subSector.name)) {
-                                nuevosSectoresDisponibles.push(subSector.name);
-                                estadoActual.sectoresNotificados.push(subSector.name);
+                                nuevosSectoresParaNotificar.push(subSector.name);
+                                estadoActual.sectoresNotificados.push(subSector.name); // Add to state for future runs
                             }
                         }
                     });
@@ -30,8 +35,17 @@ async function verificarDisponibilidad() {
             });
         }
 
-        if (nuevosSectoresDisponibles.length > 0) {
-            const mensaje = `*¡Nuevos sectores disponibles para DUA LIPA!*\n\n*Sectores:* ${nuevosSectoresDisponibles.join(', ')}\n\n[Comprar entradas aquí](${config.linkCompra})`;
+        if (esPrimeraEjecucion) {
+            if (sectoresDisponiblesAhora.length > 0) {
+                console.log('🎉 Primera ejecución: Sectores disponibles actualmente:');
+                sectoresDisponiblesAhora.forEach(sector => console.log(`- ${sector}`));
+                console.log(`Puedes comprar entradas aquí: ${config.linkCompra}`);
+            } else {
+                console.log('Primera ejecución: No hay sectores disponibles actualmente.');
+            }
+            await stateManager.guardarEstado(estadoActual); // Save the state after first run
+        } else if (nuevosSectoresParaNotificar.length > 0) {
+            const mensaje = `*¡Nuevos sectores disponibles para DUA LIPA!*\n\n*Sectores:* ${nuevosSectoresParaNotificar.join(', ')}\n\n[Comprar entradas aquí](${config.linkCompra})`;
             await notifier.enviarNotificacion(bot, config.telegramChatId, mensaje);
             await stateManager.guardarEstado(estadoActual);
         } else {
