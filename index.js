@@ -36,7 +36,7 @@ async function verificarDisponibilidad() {
 
 *Sectores:* ${nuevosSectoresDisponibles.map(s => escapeMarkdown(s)).join(', ')}
 
-[Comprar entradas aquí](${config.linkCompra})`;
+[Comprar entradas aquí](${escapeMarkdown(config.linkCompra)})`;
             await notifier.enviarNotificacion(bot, config.telegramChatId, mensaje);
             await stateManager.guardarEstado(estadoActual);
         } else {
