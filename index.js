@@ -16,16 +16,17 @@ async function verificarDisponibilidad() {
         const estadoActual = { ...estadoInicial }; // Create a mutable copy
 
         const shows = bootstrapData.model.data.shows;
-        let sectoresDisponiblesAhora = []; // All sectors currently available
-        let nuevosSectoresParaNotificar = []; // Only new ones for Telegram
+        let todosSectoresDisponibles = []; // All sectors currently available, regardless of config.sectoresObjetivo
+        let nuevosSectoresParaNotificar = []; // Only new ones for Telegram, filtered by config.sectoresObjetivo
 
         for (const show of shows) {
             show.sectors.forEach(grupo => {
                 if (grupo.sections && grupo.sections.length > 0) {
                     grupo.sections.forEach(subSector => {
-                        if (config.sectoresObjetivo.includes(subSector.name) && subSector.available) {
-                            sectoresDisponiblesAhora.push(subSector.name);
-                            if (!estadoActual.sectoresNotificados.includes(subSector.name)) {
+                        if (subSector.available) {
+                            todosSectoresDisponibles.push(subSector.name);
+                            // Only add to state and new notifications if it's one of the target sectors
+                            if (config.sectoresObjetivo.includes(subSector.name) && !estadoActual.sectoresNotificados.includes(subSector.name)) {
                                 nuevosSectoresParaNotificar.push(subSector.name);
                                 estadoActual.sectoresNotificados.push(subSector.name); // Add to state for future runs
                             }
@@ -36,9 +37,9 @@ async function verificarDisponibilidad() {
         }
 
         if (esPrimeraEjecucion) {
-            if (sectoresDisponiblesAhora.length > 0) {
-                console.log('🎉 Primera ejecución: Sectores disponibles actualmente:');
-                sectoresDisponiblesAhora.forEach(sector => console.log(`- ${sector}`));
+            if (todosSectoresDisponibles.length > 0) {
+                console.log('🎉 Primera ejecución: Sectores disponibles actualmente (todos):');
+                todosSectoresDisponibles.forEach(sector => console.log(`- ${sector}`));
                 console.log(`Puedes comprar entradas aquí: ${config.linkCompra}`);
             } else {
                 console.log('Primera ejecución: No hay sectores disponibles actualmente.');
