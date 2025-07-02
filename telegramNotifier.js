@@ -22,4 +22,8 @@ async function enviarMensajeSimple(bot, chatId, mensaje) {
     }
 }
 
-module.exports = { inicializarBot, enviarNotificacion, enviarMensajeSimple };
+function escapeMarkdown(text) {
+  return text.replace(/[_*[\\]()~`>#+\-=|{}.!]/g, '\\module.exports = { inicializarBot, enviarNotificacion, enviarMensajeSimple };');
+}
+
+module.exports = { inicializarBot, enviarNotificacion, enviarMensajeSimple, escapeMarkdown };

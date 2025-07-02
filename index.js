@@ -2,6 +2,7 @@ const http = require('http');
 const config = require('./config');
 const scraper = require('./scraper');
 const notifier = require('./telegramNotifier');
+const { escapeMarkdown } = require('./telegramNotifier');
 const stateManager = require('./stateManager');
 
 const bot = notifier.inicializarBot(config.telegramToken);
@@ -31,7 +32,11 @@ async function verificarDisponibilidad() {
         }
 
         if (nuevosSectoresDisponibles.length > 0) {
-            const mensaje = `*¡Nuevos sectores disponibles para DUA LIPA!\n\n*Sectores:* ${nuevosSectoresDisponibles.join(', ')}\n\n[Comprar entradas aquí](${config.linkCompra})`;
+            const mensaje = `*¡Nuevos sectores disponibles para DUA LIPA!
+
+*Sectores:* ${nuevosSectoresDisponibles.map(s => escapeMarkdown(s)).join(', ')}
+
+[Comprar entradas aquí](${config.linkCompra})`;
             await notifier.enviarNotificacion(bot, config.telegramChatId, mensaje);
             await stateManager.guardarEstado(estadoActual);
         } else {
