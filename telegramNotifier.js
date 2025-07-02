@@ -23,17 +23,8 @@ async function enviarMensajeSimple(bot, chatId, mensaje) {
 }
 
 function escapeMarkdown(text) {
-  // Escapa los caracteres especiales de Markdown que no son parte de la sintaxis deseada
-  // y que podrían causar problemas si aparecen en el texto.
-  // No escapa *, _, [, ], (, ) porque se usan para el formato deseado.
-  return text.replace(/[_~`>#+\-=|{}.!]/g, '\\function escapeMarkdown(text){
-  // Escapa los caracteres especiales de Markdown que no son parte de la sintaxis deseada
-  // y que podrían causar problemas si aparecen en el texto.
-  // No escapa *, _, [, ], (, ) porque se usan para el formato deseado.
-  return text.replace(/[_~`>#+\-=|{}.!]/g, '\function escapeMarkdown(text) {  // Escapa los caracteres especiales de Markdown que no son parte de la sintaxis deseada  // y que podrían causar problemas si aparecen en el texto.  // No escapa *, _, [, ], (, ) porque se usan para el formato deseado.  return text.replace(/[_~`>#+\-=|{}.!]/g, '\\function escapeMarkdown(text) {
-  return text.replace(/[_*[\\]()~`>#+\-=|{}.!]/g, '\\module.exports = { inicializarBot, enviarNotificacion, enviarMensajeSimple };');
-}');}');
-}');
+  // Escapa los caracteres especiales de Markdown que pueden causar problemas
+  return text.replace(/[_~`>#+\-=|{}.!]/g, '\\$&');
 }
 
 module.exports = { inicializarBot, enviarNotificacion, enviarMensajeSimple, escapeMarkdown };
