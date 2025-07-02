@@ -32,7 +32,7 @@ async function verificarDisponibilidad() {
         }
 
         if (nuevosSectoresDisponibles.length > 0) {
-            const mensaje = `*¡Nuevos sectores disponibles para DUA LIPA!
+            const mensaje = `*¡Nuevos sectores disponibles para DUA LIPA!*
 
 *Sectores:* ${nuevosSectoresDisponibles.map(s => escapeMarkdown(s)).join(', ')}
 
